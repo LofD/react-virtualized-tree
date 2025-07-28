@@ -1,5 +1,5 @@
 {
-  "name": "react-virtualized-tree",
+  "name": "@lofd/react-virtualized-tree",
   "version": "2.0.2",
   "description": "react-virtualized-tree React component",
   "main": "lib/index.js",
