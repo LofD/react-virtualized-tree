@@ -5,6 +5,28 @@ import {AutoSizer, List, CellMeasurerCache, CellMeasurer} from 'react-virtualize
 import {FlattenedNode} from './shapes/nodeShapes';
 import TreeState, {State} from './state/TreeState';
 
+class Row extends React.Component {
+  render() {
+    const {key, index, style, NodeRenderer, nodeMarginLeft, node, onChange, measure, registerChild} = this.props;
+    return (
+      <NodeRenderer
+        registerChild={registerChild}
+        key={key}
+        style={{
+          ...style,
+          marginLeft: node.deepness * nodeMarginLeft,
+          userSelect: 'none',
+          cursor: 'pointer',
+        }}
+        node={node}
+        onChange={onChange}
+        measure={measure}
+        index={index}
+      />
+    );
+  }
+}
+
 export default class Tree extends React.Component {
   _cache = new CellMeasurerCache({
     fixedWidth: true,
@@ -61,7 +83,19 @@ export default class Tree extends React.Component {
 
     return (
       <CellMeasurer cache={this._cache} columnIndex={0} key={key} rowIndex={index} parent={parent}>
-        {m => this.rowRenderer({...m, index, node, key, style, NodeRenderer})}
+        {m => {
+          const p = {
+            ...m,
+            index,
+            node,
+            key,
+            style,
+            NodeRenderer,
+            onChange: this.props.onChange,
+            nodeMarginLeft: this.props.nodeMarginLeft,
+          };
+          return <Row {...p} />;
+        }}
       </CellMeasurer>
     );
   };

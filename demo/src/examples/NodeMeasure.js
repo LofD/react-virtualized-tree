@@ -119,7 +119,7 @@ class FootballPlayerRenderer extends React.Component {
     const {isExpanded} = getNodeRenderOptions(node);
 
     return (
-      <span>
+      <span ref={this.props.registerChild}>
         {children}
         <b>{name}</b>
         {isExpanded && <p>{DESCRIPTIONS[id]}</p>}
