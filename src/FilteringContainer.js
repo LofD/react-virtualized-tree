@@ -4,8 +4,8 @@ import debounce from 'lodash.debounce';
 import classNames from 'classnames';
 
 import DefaultGroupRenderer from './filtering/DefaultGroupRenderer';
-import {Node} from './shapes/nodeShapes';
 import {filterNodes} from './selectors/filtering';
+import UnfilteredNodesContext from './UnfilteredNodesContext';
 
 const indexByName = searchTerm => ({name}) => {
   const upperCaseName = name.toUpperCase();
@@ -20,14 +20,6 @@ export default class FilteringContainer extends React.Component {
     filterTerm: '',
   };
 
-  getChildContext = () => {
-    return {unfilteredNodes: this.props.nodes};
-  };
-
-  static childContextTypes = {
-    unfilteredNodes: PropTypes.arrayOf(PropTypes.shape(Node)).isRequired,
-  };
-
   static defaultProps = {
     debouncer: debounce,
     groupRenderer: DefaultGroupRenderer,
@@ -38,6 +30,14 @@ export default class FilteringContainer extends React.Component {
     super(props);
 
     this.setFilterTerm = props.debouncer(this.setFilterTerm, 300);
+  }
+
+  getContextValue(nodes) {
+    if (!this.contextValue || this.contextValue.unfilteredNodes !== nodes) {
+      this.contextValue = {unfilteredNodes: nodes};
+    }
+
+    return this.contextValue;
   }
 
   setFilterTerm() {
@@ -74,14 +74,16 @@ export default class FilteringContainer extends React.Component {
       : relevantNodes;
 
     return (
-      <div className="tree-filter-container">
-        <div className={classNames('tree-lookup-input', {group: !!groups})}>
-          <input value={filterText} onChange={this.handleFilterTextChange} placeholder="Search..." />
-          <i aria-hidden="true" className="mi mi-11 mi-search" />
-          {groups && <GroupRenderer groups={groups} selectedGroup={selectedGroup} onChange={onSelectedGroupChange} />}
+      <UnfilteredNodesContext.Provider value={this.getContextValue(nodes)}>
+        <div className="tree-filter-container">
+          <div className={classNames('tree-lookup-input', {group: !!groups})}>
+            <input value={filterText} onChange={this.handleFilterTextChange} placeholder="Search..." />
+            <i aria-hidden="true" className="mi mi-11 mi-search" />
+            {groups && <GroupRenderer groups={groups} selectedGroup={selectedGroup} onChange={onSelectedGroupChange} />}
+          </div>
+          {treeRenderer({nodes: filteredNodes, nodeParentMappings})}
         </div>
-        {treeRenderer({nodes: filteredNodes, nodeParentMappings})}
-      </div>
+      </UnfilteredNodesContext.Provider>
     );
   }
 }

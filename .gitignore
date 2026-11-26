@@ -8,3 +8,4 @@ npm-debug.log*
 /gh-pages
 package-lock.json
 yarn-error.log
+/.idea

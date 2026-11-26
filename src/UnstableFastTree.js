@@ -3,13 +3,12 @@ import PropTypes from 'prop-types';
 
 import Tree from './Tree';
 import {Node} from './shapes/nodeShapes';
+import UnfilteredNodesContext from './UnfilteredNodesContext';
 import TreeStateModifiers from './state/TreeStateModifiers';
 import {UPDATE_TYPE} from './contants';
 
 export default class UnstableFastTree extends React.Component {
-  static contextTypes = {
-    unfilteredNodes: PropTypes.arrayOf(PropTypes.shape(Node)),
-  };
+  static contextType = UnfilteredNodesContext;
 
   get nodes() {
     return this.context.unfilteredNodes || this.props.nodes;

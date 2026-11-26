@@ -6,6 +6,7 @@ import {UPDATE_TYPE} from './contants';
 import {getFlattenedTree} from './selectors/getFlattenedTree';
 import {deleteNodeFromTree, replaceNodeFromTree, getRowIndexFromId} from './selectors/nodes';
 import {Node} from './shapes/nodeShapes';
+import UnfilteredNodesContext from './UnfilteredNodesContext';
 import {createSelector} from 'reselect';
 
 const DEFAULT_UPDATE_TYPES = {
@@ -28,9 +29,7 @@ const getExtensions = createSelector(
 );
 
 export default class TreeContainer extends React.Component {
-  static contextTypes = {
-    unfilteredNodes: PropTypes.arrayOf(PropTypes.shape(Node)),
-  };
+  static contextType = UnfilteredNodesContext;
 
   get nodes() {
     return this.context.unfilteredNodes || this.props.nodes;
